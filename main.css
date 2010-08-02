@@ -1,0 +1,68 @@
+body {
+   font: 12px/1 Helvetica, Arial, sans-serif;
+}
+
+.screen {
+  position:absolute;
+  top: 0;
+  left: 0;
+  font-size: 64px;
+  text-transform: uppercase;
+  margin: 12%;
+  -webkit-transition: opacity 0.5s linear;
+  -moz-transition: opacity 0.5s linear;
+}
+
+.previous {
+  opacity: 0;
+  -webkit-transition: opacity 0.5s linear;
+  -moz-transition: opacity 0.5s linear;
+}
+
+.night {
+  color: #fff;
+  background-color: #000;
+}
+
+.day {
+  color: #000;
+  background-color: #fff;
+}
+
+#colophon {
+  position:absolute;
+  bottom:0;
+  right:0;
+  margin: 12%;
+  text-align: right;
+}
+
+.day #colophon {
+  color: #ccc;
+}
+
+.night #colophon {
+  color: #333;
+}
+
+.day a,
+.day a:visited {
+  color: #999;
+}
+
+.night a,
+.night a:visited {
+  color: #666;
+}
+
+.day a:hover {
+  color: #666;
+  -webkit-transition: color 0.3s linear;
+  -moz-transition: color 0.3s linear;
+}
+
+.night a:hover {
+  color: #999;
+  -webkit-transition: color 0.3s linear;
+  -moz-transition: color 0.3s linear;
+}
