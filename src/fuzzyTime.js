@@ -64,7 +64,7 @@ function createFuzzyTime(d) {
   }
   
   function pad(i) {
-    return (i > 9 ? '' : ' ') + i;
+    return (i > 9 ? '' : '0') + i;
   }
   
   return {
