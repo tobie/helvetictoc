@@ -10,7 +10,7 @@ It displays humanized time set in Helvetica.
 Technical details:
 -----------------
 
-helveticloc doesn't rely on any external scripts.
+helvetictoc doesn't rely on any external scripts.
 
 It's however using [CommonJS modules](http://wiki.commonjs.org/wiki/Modules/1.1) which are concatenated using [modulr](http://github.com/codespeaks/modulr).
 
