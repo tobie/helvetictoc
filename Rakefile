@@ -4,10 +4,8 @@ require 'modulr'
 require 'erb'
 
 task :build do
-  t = ERB.new(IO.read('index.erb'), nil, '%')
-  js = Modulr.ize(File.join('js', 'program.js'), { :sync => true })
-  css = File.read('main.css')
-  s = t.result(binding)
-  File.open('index.html', 'w') { |f| f << s }
-  puts "output size: " + s.length.to_s
+  mkdir_p('js')
+  js = Modulr.ize(File.join('src', 'program.js'), { :sync => true })
+  File.open(File.join('js', 'main.js'), 'w') { |f| f << js }
+  puts "JS output size: " + js.length.to_s
 end
