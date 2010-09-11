@@ -116,16 +116,6 @@ var require = (function() {
   return require;
 })();
 require.define({
-'program': function(require, exports, module) {
-var ft = require('./fuzzyTime').createFuzzyTime(),
-    c = require('./clock').createClock(ft, document);
-
-c.draw();
-setInterval(function() {
-  c.redraw();
-}, 1000);
-
-}, 
 'fuzzyTime': function(require, exports, module) {
 function createFuzzyTime(d) {
   d = d || new Date();
@@ -217,12 +207,15 @@ var createFuzzyTime = require('./fuzzyTime').createFuzzyTime,
 
 function createClock(time, doc) {
   
-  var screens = [
-    doc.createElement('div'),
-    doc.createElement('div')
-  ];
+  var fontSize,
+      screens = [
+        doc.createElement('div'),
+        doc.createElement('div')
+      ],
+      clientHeight;
   
-  time = time || createFuzzyTime();
+  refreshContent();
+  refreshSize();
   
   doc.body.appendChild(screens[0]);
   doc.body.appendChild(screens[1]);
@@ -254,11 +247,7 @@ function createClock(time, doc) {
   function isDay() {
     return time.isDay();
   }
-
-  function refresh(t) {
-    setTime(createFuzzyTime());
-  }
-
+  
   function setTime(t) {
     time = t;
   }
@@ -267,7 +256,8 @@ function createClock(time, doc) {
     return !time.isEqual(t || createFuzzyTime());
   }
 
-  function toHtmlString() {
+  function refreshContent() {
+    setTime(createFuzzyTime());
     var template, sc = timeInWords.SPECIAL_CASES[time.to24HourString()];
     
     if (sc) {
@@ -276,7 +266,7 @@ function createClock(time, doc) {
     
     template = timeInWords[time.getMinutes() ? 'template' : 'onTheHourTemplate'];
 
-    return template.replace(/\{\{\s*(\w+)\s*\}\}/g, function(m, m1) {
+    content = template.replace(/\{\{\s*(\w+)\s*\}\}/g, function(m, m1) {
       switch(m1) {
         case 'p': return getPreposition();
         case 'm': return getMinutesInWords();
@@ -289,29 +279,45 @@ function createClock(time, doc) {
     var s0 = screens[0], s1 = screens[1];
     s0.style.zIndex = 0;
     s1.style.zIndex = 1;
-    s0.innerHTML = toHtmlString();
+    s0.style.fontSize = fontSize;
+    s1.style.fontSize = fontSize;
+    s0.innerHTML = content;
     s0.className = 'screen';
     s1.className = 'screen previous';
     screens.reverse();
     doc.body.className = isNight() ? 'night' : 'day';
   }
   
+  function setFontSize() {
+    fontSize = Math.round(document.documentElement.clientHeight / 8.5) + 'px';
+  }
+  
+  function refreshSize() {
+    clientHeight = document.documentElement.clientHeight;
+    fontSize = Math.round(clientHeight / 8.5) + 'px';
+  }
+  
+  function wasResized() {
+    return clientHeight !== document.documentElement.clientHeight;
+  }
+  
   function redraw() {
+    var redraw = false;
+    
     if (isStale()) {
-      refresh();
-      draw();
+      refreshContent();
+      redraw = true;
     }
+    
+    if (wasResized()) {
+      refreshSize();
+      redraw = true;
+    }
+    
+    if (redraw) { draw(); }
   }
 
   return {
-    getMinutesInWords: getMinutesInWords,
-    getHoursInWords: getHoursInWords,
-    getPreposition: getPreposition,
-    isNight: isNight,
-    refresh: refresh,
-    setTime: setTime,
-    isStale: isStale,
-    toHtmlString: toHtmlString,
     draw: draw,
     redraw: redraw
   };
@@ -368,6 +374,18 @@ exports.SPECIAL_CASES = {
 
 exports.onTheHourTemplate = "It’s {{ p }}<br>{{ h }} o’clock.";
 exports.template = "It’s {{ p }}<br>{{ m }}<br>{{ h }}.";
+
+}, 
+'program': function(require, exports, module) {
+var ft = require('./fuzzyTime').createFuzzyTime(),
+    c = require('./clock').createClock(ft, document);
+
+c.draw();
+setInterval(function() {
+  c.redraw();
+}, 1000);
+
+window.onresize = c.redraw;
 
 }
 });

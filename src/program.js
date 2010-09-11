@@ -5,3 +5,5 @@ c.draw();
 setInterval(function() {
   c.redraw();
 }, 1000);
+
+window.onresize = c.redraw;
