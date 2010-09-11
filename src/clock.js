@@ -1,17 +1,18 @@
 var createFuzzyTime = require('./fuzzyTime').createFuzzyTime,
     timeInWords = require('./timeInWords');
 
-function createClock(time, doc) {
+function createClock(doc) {
   
-  var fontSize,
+  var time,
+      fontSize,
+      content,
       screens = [
         doc.createElement('div'),
         doc.createElement('div')
       ],
       clientHeight;
   
-  refreshContent();
-  refreshSize();
+  refresh(time);
   
   doc.body.appendChild(screens[0]);
   doc.body.appendChild(screens[1]);
@@ -45,15 +46,15 @@ function createClock(time, doc) {
   }
   
   function setTime(t) {
-    time = t;
+    time = createFuzzyTime(t);
   }
 
   function isStale(t) {
     return !time.isEqual(t || createFuzzyTime());
   }
 
-  function refreshContent() {
-    setTime(createFuzzyTime());
+  function refreshContent(t) {
+    setTime(t);
     var template, sc = timeInWords.SPECIAL_CASES[time.to24HourString()];
     
     if (sc) {
@@ -112,8 +113,14 @@ function createClock(time, doc) {
     
     if (redraw) { draw(); }
   }
+  
+  function refresh(t) {
+    refreshContent(t);
+    refreshSize();
+  }
 
   return {
+    refresh: refresh,
     draw: draw,
     redraw: redraw
   };
