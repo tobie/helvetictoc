@@ -3,7 +3,7 @@ require 'rake'
 require 'modulr'
 require 'erb'
 
-task :build do
+task :build_js do
   mkdir_p('js')
   js = Modulr.ize(File.join('src', 'program.js'), { :sync => true })
   File.open(File.join('js', 'main.js'), 'w') { |f| f << js }
@@ -16,3 +16,16 @@ task :build do
   puts "---------------------------"
   puts "TOTAL: #{ js_size + css_size + html_size  }"
 end
+
+task :build_inline do
+  mkdir_p('inline_output')
+  js = Modulr.ize(File.join('src', 'program.js'), { :sync => true })
+  css = File.read(File.join('css', 'main.css'))
+  template = File.read('index.template')
+  File.open(File.join('inline_output', 'index.html'), 'w') {
+    |f| f << template.gsub(/\{\{\s*(\w+)\s*\}\}/) do |m|
+      eval($1)
+    end
+  }
+end
+

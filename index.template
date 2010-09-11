@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="A time-full tribute to a timeless typeface.">
+  <title>HELVETICTOC</title>
+  <style type="text/css">{{ css }}</style>
+</head>
+<body>
+  <div id="colophon">A time-full tribute to a timeless typeface. Brought to you by @<a href="http://twitter.com/tobie">tobie</a>.</div>
+  <script type="text/javascript">{{ js }}</script>
+</body>
+</html>
