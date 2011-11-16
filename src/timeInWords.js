@@ -33,15 +33,15 @@ exports.PREPOSITIONS = {
   '1': ['just after', 'right after', 'shortly after']
 };
 
-var roundAbout = 'it’s ’round about<br>midnight.';
+var roundAbout = 'It’s ’round about<br>midnight.';
 
 exports.SPECIAL_CASES = {
   '23:58': roundAbout,
   '23:59': roundAbout,
-  '00:00': 'it’s<br> midnight.',
+  '00:00': 'It’s<br> midnight.',
   '00:01': roundAbout,
   '00:02': roundAbout,
-  '12:00': 'it’s<br> noon.'
+  '12:00': 'It’s<br> noon.'
 };
 
 exports.onTheHourTemplate = "It’s {{ p }}<br>{{ h }} o’clock.";
