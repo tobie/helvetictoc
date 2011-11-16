@@ -12,7 +12,6 @@ body {
   top: 0;
   left: 0;
   font-size: 64px;
-  text-transform: uppercase;
   margin: 12%;
   -webkit-transition: opacity 0.5s linear;
   -moz-transition: opacity 0.5s linear;
