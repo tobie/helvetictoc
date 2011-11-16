@@ -4,7 +4,7 @@ body {
    overflow:hidden;
    text-rendering:optimizeLegibility;
    cursor:default;
-   font: 12px/1 Helvetica, Arial, sans-serif;
+   font: 12px/1 Helvetica, "Comic Sans", "Comic Sans MS", cursive;
 }
 
 .screen {
