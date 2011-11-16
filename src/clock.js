@@ -4,7 +4,6 @@ var createFuzzyTime = require('./fuzzyTime').createFuzzyTime,
 function createClock(doc) {
   
   var time,
-      fontSize,
       content,
       screens = [
         doc.createElement('div'),
@@ -76,8 +75,6 @@ function createClock(doc) {
     var s0 = screens[0], s1 = screens[1];
     s0.style.zIndex = 0;
     s1.style.zIndex = 1;
-    s0.style.fontSize = fontSize;
-    s1.style.fontSize = fontSize;
     s0.innerHTML = content;
     s0.className = 'screen';
     s1.className = 'screen previous';
@@ -85,38 +82,15 @@ function createClock(doc) {
     doc.body.className = isNight() ? 'night' : 'day';
   }
   
-  function setFontSize() {
-    fontSize = Math.round(document.documentElement.clientHeight / 8.5) + 'px';
-  }
-  
-  function refreshSize() {
-    clientHeight = document.documentElement.clientHeight;
-    fontSize = Math.round(clientHeight / 8.5) + 'px';
-  }
-  
-  function wasResized() {
-    return clientHeight !== document.documentElement.clientHeight;
-  }
-  
   function redraw() {
-    var redraw = false;
-    
     if (isStale()) {
       refreshContent();
-      redraw = true;
+      draw();
     }
-    
-    if (wasResized()) {
-      refreshSize();
-      redraw = true;
-    }
-    
-    if (redraw) { draw(); }
   }
   
   function refresh(t) {
     refreshContent(t);
-    refreshSize();
   }
 
   return {
