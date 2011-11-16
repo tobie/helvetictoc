@@ -30,7 +30,7 @@ exports.MINUTES = {
 exports.PREPOSITIONS = {
   '-1': ['almost', 'nearly'],
   '0': ['exactly', 'precisely', 'now', ''],
-  '1': ['just after', 'right after', 'shortly after']
+  '1': ['about', 'around', 'just after', 'right after', 'shortly after']
 };
 
 var roundAbout = 'It’s ’round about<br>midnight.';
