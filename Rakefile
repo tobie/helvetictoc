@@ -18,11 +18,20 @@ task :build_js do
 end
 
 task :build_inline do
-  mkdir_p('inline_output')
   js = Modulr.ize(File.join('src', 'program.js'), { :sync => true })
   css = File.read(File.join('css', 'main.css'))
   template = File.read('index.template')
-  File.open(File.join('inline_output', 'index.html'), 'w') {
+  File.open('inline.html', 'w') {
+    |f| f << template.gsub(/\{\{\s*(\w+)\s*\}\}/) do |m|
+      eval($1)
+    end
+  }
+end
+
+task :max_inline do
+  css = File.read(File.join('css', 'main.css'))
+  template = File.read('max.template')
+  File.open('max_inline.html', 'w') {
     |f| f << template.gsub(/\{\{\s*(\w+)\s*\}\}/) do |m|
       eval($1)
     end
