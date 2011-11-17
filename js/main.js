@@ -1,5 +1,5 @@
-(function() {
-// modulr.sync.js (c) 2010 codespeaks sàrl
+
+(function() {// modulr.sync.js (c) 2010 codespeaks sàrl
 // Freely distributable under the terms of the MIT license.
 // For details, see:
 //   http://github.com/codespeaks/modulr/blob/master/LICENSE
@@ -116,15 +116,136 @@ var require = (function() {
   return require;
 })();
 require.define({
-'program': function(require, exports, module) {
-var ft = require('./fuzzyTime').createFuzzyTime(),
-    c = require('./clock').createClock(ft, document);
+'clock': function(require, exports, module) {
+var createFuzzyTime = require('./fuzzyTime').createFuzzyTime,
+    timeInWords = require('./timeInWords');
 
-c.draw();
-setInterval(function() {
-  c.redraw();
-}, 1000);
+function createClock(doc) {
+  
+  var time,
+      fontSize,
+      content,
+      screens = [
+        doc.createElement('div'),
+        doc.createElement('div')
+      ],
+      clientHeight;
+  
+  refresh(time);
+  
+  doc.body.appendChild(screens[0]);
+  doc.body.appendChild(screens[1]);
+  
+  function getMinutesInWords() {
+    return timeInWords.MINUTES[time.getMinutes()];
+  }
 
+  function getHoursInWords() {
+    return timeInWords.HOURS[time.getHours()];
+  }
+
+  function getPreposition() {
+    var ff = time.getFuzzyFactor(),
+        p = pickOne(timeInWords.PREPOSITIONS[ff]);
+    
+    return ff === 0 ? pickOne(['', p]) : p;
+  }
+  
+  function pickOne(elements) {
+    var index = Math.floor(Math.random() * elements.length);
+    return elements[index];
+  }
+
+  function isNight() {
+    return time.isNight();
+  }
+
+  function isDay() {
+    return time.isDay();
+  }
+  
+  function setTime(t) {
+    time = createFuzzyTime(t);
+  }
+
+  function isStale(t) {
+    return !time.isEqual(t || createFuzzyTime());
+  }
+
+  function refreshContent(t) {
+    setTime(t);
+    var template, sc = timeInWords.SPECIAL_CASES[time.to24HourString()];
+    
+    if (sc) {
+      return sc;
+    }
+    
+    template = timeInWords[time.getMinutes() ? 'template' : 'onTheHourTemplate'];
+
+    content = template.replace(/\{\{\s*(\w+)\s*\}\}/g, function(m, m1) {
+      switch(m1) {
+        case 'p': return getPreposition();
+        case 'm': return getMinutesInWords();
+        case 'h': return getHoursInWords();
+      }
+    });
+  }
+  
+  function draw() {
+    var s0 = screens[0], s1 = screens[1];
+    s0.style.zIndex = 0;
+    s1.style.zIndex = 1;
+    s0.style.fontSize = fontSize;
+    s1.style.fontSize = fontSize;
+    s0.innerHTML = content;
+    s0.className = 'screen';
+    s1.className = 'screen previous';
+    screens.reverse();
+    doc.body.className = isNight() ? 'night' : 'day';
+  }
+  
+  function setFontSize() {
+    fontSize = Math.round(document.documentElement.clientHeight / 8.5) + 'px';
+  }
+  
+  function refreshSize() {
+    clientHeight = document.documentElement.clientHeight;
+    fontSize = Math.round(clientHeight / 8.5) + 'px';
+  }
+  
+  function wasResized() {
+    return clientHeight !== document.documentElement.clientHeight;
+  }
+  
+  function redraw() {
+    var redraw = false;
+    
+    if (isStale()) {
+      refreshContent();
+      redraw = true;
+    }
+    
+    if (wasResized()) {
+      refreshSize();
+      redraw = true;
+    }
+    
+    if (redraw) { draw(); }
+  }
+  
+  function refresh(t) {
+    refreshContent(t);
+    refreshSize();
+  }
+
+  return {
+    refresh: refresh,
+    draw: draw,
+    redraw: redraw
+  };
+}
+
+exports.createClock = createClock; 
 }, 
 'fuzzyTime': function(require, exports, module) {
 function createFuzzyTime(d) {
@@ -211,114 +332,6 @@ function createFuzzyTime(d) {
 
 exports.createFuzzyTime = createFuzzyTime; 
 }, 
-'clock': function(require, exports, module) {
-var createFuzzyTime = require('./fuzzyTime').createFuzzyTime,
-    timeInWords = require('./timeInWords');
-
-function createClock(time, doc) {
-  
-  var screens = [
-    doc.createElement('div'),
-    doc.createElement('div')
-  ];
-  
-  time = time || createFuzzyTime();
-  
-  doc.body.appendChild(screens[0]);
-  doc.body.appendChild(screens[1]);
-  
-  function getMinutesInWords() {
-    return timeInWords.MINUTES[time.getMinutes()];
-  }
-
-  function getHoursInWords() {
-    return timeInWords.HOURS[time.getHours()];
-  }
-
-  function getPreposition() {
-    var ff = time.getFuzzyFactor(),
-        p = pickOne(timeInWords.PREPOSITIONS[ff]);
-    
-    return ff === 0 ? pickOne(['', p]) : p;
-  }
-  
-  function pickOne(elements) {
-    var index = Math.floor(Math.random() * elements.length);
-    return elements[index];
-  }
-
-  function isNight() {
-    return time.isNight();
-  }
-
-  function isDay() {
-    return time.isDay();
-  }
-
-  function refresh(t) {
-    setTime(createFuzzyTime());
-  }
-
-  function setTime(t) {
-    time = t;
-  }
-
-  function isStale(t) {
-    return !time.isEqual(t || createFuzzyTime());
-  }
-
-  function toHtmlString() {
-    var template, sc = timeInWords.SPECIAL_CASES[time.to24HourString()];
-    
-    if (sc) {
-      return sc;
-    }
-    
-    template = timeInWords[time.getMinutes() ? 'template' : 'onTheHourTemplate'];
-
-    return template.replace(/\{\{\s*(\w+)\s*\}\}/g, function(m, m1) {
-      switch(m1) {
-        case 'p': return getPreposition();
-        case 'm': return getMinutesInWords();
-        case 'h': return getHoursInWords();
-      }
-    });
-  }
-  
-  function draw() {
-    var s0 = screens[0], s1 = screens[1];
-    s0.style.zIndex = 0;
-    s1.style.zIndex = 1;
-    s0.innerHTML = toHtmlString();
-    s0.className = 'screen';
-    s1.className = 'screen previous';
-    screens.reverse();
-    doc.body.className = isNight() ? 'night' : 'day';
-  }
-  
-  function redraw() {
-    if (isStale()) {
-      refresh();
-      draw();
-    }
-  }
-
-  return {
-    getMinutesInWords: getMinutesInWords,
-    getHoursInWords: getHoursInWords,
-    getPreposition: getPreposition,
-    isNight: isNight,
-    refresh: refresh,
-    setTime: setTime,
-    isStale: isStale,
-    toHtmlString: toHtmlString,
-    draw: draw,
-    redraw: redraw
-  };
-}
-
-exports.createClock = createClock; 
-}, 
 'timeInWords': function(require, exports, module) {
 exports.HOURS = [
   'twelve',
@@ -352,24 +365,30 @@ exports.MINUTES = {
 exports.PREPOSITIONS = {
   '-1': ['almost', 'nearly'],
   '0': ['exactly', 'precisely', 'now', ''],
-  '1': ['after', 'about', 'around']
+  '1': ['about', 'around', 'just after', 'right after', 'shortly after']
 };
 
-var roundAbout = 'it’s ’round about<br>midnight.';
+var roundAbout = 'It’s ’round about<br>midnight.';
 
 exports.SPECIAL_CASES = {
   '23:58': roundAbout,
   '23:59': roundAbout,
-  '00:00': 'it’s<br> midnight.',
+  '00:00': 'It’s<br> midnight.',
   '00:01': roundAbout,
   '00:02': roundAbout,
-  '12:00': 'it’s<br> noon.'
+  '12:00': 'It’s<br> noon.'
 };
 
 exports.onTheHourTemplate = "It’s {{ p }}<br>{{ h }} o’clock.";
 exports.template = "It’s {{ p }}<br>{{ m }}<br>{{ h }}.";
 
+}, 
+'program': function(require, exports, module) {
+var c = require('./clock').createClock(document);
+c.draw();
+setInterval(c.redraw, 1000);
+window.onresize = c.redraw;
+
 }
 });
-require('program');
-})();
+  require('program');})();
