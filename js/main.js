@@ -1,5 +1,5 @@
-(function() {
-// modulr.sync.js (c) 2010 codespeaks sàrl
+
+(function() {// modulr.sync.js (c) 2010 codespeaks sàrl
 // Freely distributable under the terms of the MIT license.
 // For details, see:
 //   http://github.com/codespeaks/modulr/blob/master/LICENSE
@@ -123,7 +123,6 @@ var createFuzzyTime = require('./fuzzyTime').createFuzzyTime,
 function createClock(doc) {
   
   var time,
-      fontSize,
       content,
       screens = [
         doc.createElement('div'),
@@ -195,8 +194,6 @@ function createClock(doc) {
     var s0 = screens[0], s1 = screens[1];
     s0.style.zIndex = 0;
     s1.style.zIndex = 1;
-    s0.style.fontSize = fontSize;
-    s1.style.fontSize = fontSize;
     s0.innerHTML = content;
     s0.className = 'screen';
     s1.className = 'screen previous';
@@ -204,38 +201,15 @@ function createClock(doc) {
     doc.body.className = isNight() ? 'night' : 'day';
   }
   
-  function setFontSize() {
-    fontSize = Math.round(document.documentElement.clientHeight / 8.5) + 'px';
-  }
-  
-  function refreshSize() {
-    clientHeight = document.documentElement.clientHeight;
-    fontSize = Math.round(clientHeight / 8.5) + 'px';
-  }
-  
-  function wasResized() {
-    return clientHeight !== document.documentElement.clientHeight;
-  }
-  
   function redraw() {
-    var redraw = false;
-    
     if (isStale()) {
       refreshContent();
-      redraw = true;
+      draw();
     }
-    
-    if (wasResized()) {
-      refreshSize();
-      redraw = true;
-    }
-    
-    if (redraw) { draw(); }
   }
   
   function refresh(t) {
     refreshContent(t);
-    refreshSize();
   }
 
   return {
@@ -365,18 +339,18 @@ exports.MINUTES = {
 exports.PREPOSITIONS = {
   '-1': ['almost', 'nearly'],
   '0': ['exactly', 'precisely', 'now', ''],
-  '1': ['just after', 'right after', 'shortly after']
+  '1': ['about', 'around', 'just after', 'right after', 'shortly after']
 };
 
-var roundAbout = 'it’s ’round about<br>midnight.';
+var roundAbout = 'It’s ’round about<br>midnight.';
 
 exports.SPECIAL_CASES = {
   '23:58': roundAbout,
   '23:59': roundAbout,
-  '00:00': 'it’s<br> midnight.',
+  '00:00': 'It’s<br> midnight.',
   '00:01': roundAbout,
   '00:02': roundAbout,
-  '12:00': 'it’s<br> noon.'
+  '12:00': 'It’s<br> noon.'
 };
 
 exports.onTheHourTemplate = "It’s {{ p }}<br>{{ h }} o’clock.";
@@ -391,5 +365,4 @@ window.onresize = c.redraw;
 
 }
 });
-require('program');
-})();
+  require('program');})();
