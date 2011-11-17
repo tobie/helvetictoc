@@ -4,16 +4,15 @@ body {
    overflow:hidden;
    text-rendering:optimizeLegibility;
    cursor:default;
-   font: 64px/1 Helvetica, "Comic Sans", "Comic Sans MS", cursive;
+   font: 72px/1 Helvetica, "Comic Sans", "Comic Sans MS", cursive;
    color: #fff;
    background-color: #000;
 }
 
 .screen {
   position:absolute;
-  top: 0;
-  left: 0;
-  margin: 12%;
+  top: 50px;
+  left: 50px;
   -webkit-transition: opacity 0.5s linear;
   -moz-transition: opacity 0.5s linear;
 }
