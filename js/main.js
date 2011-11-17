@@ -1,5 +1,5 @@
-(function() {
-// modulr.sync.js (c) 2010 codespeaks sàrl
+
+(function() {// modulr.sync.js (c) 2010 codespeaks sàrl
 // Freely distributable under the terms of the MIT license.
 // For details, see:
 //   http://github.com/codespeaks/modulr/blob/master/LICENSE
@@ -365,18 +365,18 @@ exports.MINUTES = {
 exports.PREPOSITIONS = {
   '-1': ['almost', 'nearly'],
   '0': ['exactly', 'precisely', 'now', ''],
-  '1': ['just after', 'right after', 'shortly after']
+  '1': ['about', 'around', 'just after', 'right after', 'shortly after']
 };
 
-var roundAbout = 'it’s ’round about<br>midnight.';
+var roundAbout = 'It’s ’round about<br>midnight.';
 
 exports.SPECIAL_CASES = {
   '23:58': roundAbout,
   '23:59': roundAbout,
-  '00:00': 'it’s<br> midnight.',
+  '00:00': 'It’s<br> midnight.',
   '00:01': roundAbout,
   '00:02': roundAbout,
-  '12:00': 'it’s<br> noon.'
+  '12:00': 'It’s<br> noon.'
 };
 
 exports.onTheHourTemplate = "It’s {{ p }}<br>{{ h }} o’clock.";
@@ -391,5 +391,4 @@ window.onresize = c.redraw;
 
 }
 });
-require('program');
-})();
+  require('program');})();
