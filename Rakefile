@@ -17,15 +17,25 @@ task :build_js do
   puts "TOTAL: #{ js_size + css_size + html_size  }"
 end
 
+TEMPLATE_REGEXP = /\{\{\s*(\w+)\s*\}\}/
+
 task :build_inline do
   mkdir_p('inline_output')
   js = Modulr.ize(File.join('src', 'program.js'), { :sync => true })
   css = File.read(File.join('css', 'main.css'))
-  template = File.read('index.template')
-  File.open(File.join('inline_output', 'index.html'), 'w') {
-    |f| f << template.gsub(/\{\{\s*(\w+)\s*\}\}/) do |m|
-      eval($1)
-    end
-  }
+  output = 'self_contained_app.html'
+  File.delete(output) if File.exist?(output)
+  File.open(output, 'w') do |f|
+    f << File.read('index.template').gsub(TEMPLATE_REGEXP) { |m| eval($1) }
+  end
+end
+
+task :build_test do
+  css = File.read(File.join('css', 'main.css'))
+  output = 'for_testing_purposes_only.html'
+  File.delete(output) if File.exist?(output)
+  File.open(output, 'w') do |f|
+    f << File.read('max.template').gsub(TEMPLATE_REGEXP) { |m| eval($1) }
+  end
 end
 
