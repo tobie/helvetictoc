@@ -177,7 +177,7 @@ function createClock(doc) {
     var template, sc = timeInWords.SPECIAL_CASES[time.to24HourString()];
     
     if (sc) {
-      return sc;
+      return content = sc;
     }
     
     template = timeInWords[time.getMinutes() ? 'template' : 'onTheHourTemplate'];
